@@ -74,7 +74,7 @@ sessão real; 5 páginas de administração com papel autorizado.
 | **Chave de servidor** | `service_role` configurada em `.env.local`; PostgREST confirmado a devolver `users`, `audit_logs` e `fn_admin_stats()` |
 | **Auth** | Signup activo, `mailer_autoconfirm: false` (confirmação obrigatória), rotação de refresh token, `site_url` e **lista de redirects** (localhost, domínio e `.vercel.app`) |
 | **Realtime** | `notification_recipients` publicada com `replica identity full`; RLS continua a filtrar por utilizador |
-| **Email** | `lib/services/email.ts` implementado (Resend, API HTTP, HMAC de contexto, sem SDK). Sem `RESEND_API_KEY` o canal regista `ignorado/fornecedor_nao_configurado` — **nunca finge entrega** |
+| **Email** | `lib/services/email.ts` implementado sobre **Notifica** (`https://api.notifica.co.mz/api/v1`, `POST /email/send`, sem SDK). Remetente oficial `noreply@notifica.co.mz`; `pagamento`/`conta` forçados a `transactional`. Sem `NOTIFICA_API_TOKEN` o canal regista `ignorado/fornecedor_nao_configurado` — **nunca finge entrega** |
 | **Saúde** | `db`, `auth`, `rest`, `storage`, `realtime`, `pooler` todos `ACTIVE_HEALTHY` |
 
 ### Correções encontradas nesta sessão
@@ -87,6 +87,18 @@ sessão real; 5 páginas de administração com papel autorizado.
 | Canal email tratava a notificação como in-app (duplicava a notificação) | Ramo separado: o job `email` entrega e termina, sem criar `notifications` |
 | Nenhum envio de email real implementado (só um comentário `TODO`) | `deliverEmail()` com preferências por categoria, endereço lido de `auth.users`, log de cada tentativa |
 
+## 3.2 Canal de email — Notifica
+
+| Item | Detalhe |
+| --- | --- |
+| Fornecedor | **Notifica** (`https://api.notifica.co.mz/api/v1`) — plataforma moçambicana, um único contrato para email, SMS, WhatsApp e push |
+| Autenticação | `Authorization: Bearer <service token>` (`NOTIFICA_API_TOKEN`), só no servidor |
+| Endpoint | `POST /email/send` com `{to, subject, body, from, type}` — **texto simples**; o template visual é aplicado pela Notifica |
+| Remetentes | `noreply@`, `auth@`, `notification@notifica.co.mz`. O código recusa qualquer endereço fora desta lista autorizada |
+| Tipologia | `transactional` para `pagamento`/`conta`; `marketing` apenas quando há consentimento |
+| Isolamento de falhas | `AbortSignal.timeout(20s)`, nunca lança excepção: devolve `sent`/`skipped`/`failed`. Uma falha de email **não bloqueia** o registo do voto ou do pagamento |
+| Estado verificado em 12/11 | Token válido (`GET /email/senders` → 200). Envio real devolve `400 QUOTA_EXCEEDED` — falta saldo na conta, não é problema de código |
+
 ## 4. O que falta e de quem depende
 
 | # | Item | Depende de |
@@ -95,13 +107,14 @@ sessão real; 5 páginas de administração com papel autorizado.
 | 2 | ~~Redirect URLs / confirmação de email~~ | ✅ configuradas no Auth |
 | 3 | ~~`pg_cron` / refresh da classificação~~ | ✅ 4 jobs activos |
 | 4 | ~~Realtime das notificações~~ | ✅ publicado |
-| 5 | **Credenciais SMTP/Resend** (`RESEND_API_KEY`, `EMAIL_FROM`) | fornecedor de email — sem isto o canal fica marcado como inactivo |
+| 5 | **Saldo de email na Notifica** — a chave `NOTIFICA_API_TOKEN` é válida e a API responde, mas a conta devolve `400 Quota de emails insuficiente`. Carregar saldo em notifica.co.mz para o canal passar de `ignorado` a `enviado` | facturação da conta Notifica |
 | 6 | **Domínio definitivo** — trocar `site_url` de `localhost` para o domínio real antes do go-live | produção |
 | 7 | **Backups diários / PITR** | plano do projecto |
 | 8 | **Redis gerido** (rate limiting distribuído entre instâncias) | Upstash ou equivalente |
 | 9 | **Gateway de pagamento real** (contrato + credenciais) | fornecedor autorizado |
 | 10 | **Dados oficiais**: 20 concorrentes, pacotes, notícias, textos legais | produção |
-| 11 | **Rotação da palavra-passe da BD** | recomendado — foi partilhada por chat |
+| 11 | **Rotação de credenciais** | recomendado — passaram por chat: palavra-passe da BD, `NOTIFICA_API_TOKEN`, token GitHub. Rodar após o go-live |
+| 12 | **Credenciais do GoTrue / SMTP de autenticação** | a verificação de email do Supabase Auth continua limitada (poucos envios/hora). A Notifica serve as notificações da aplicação, não substitui o SMTP do GoTrue |
 
 ## 5. Comandos úteis
 

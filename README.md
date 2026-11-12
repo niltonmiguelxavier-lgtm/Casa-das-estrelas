@@ -19,8 +19,10 @@ white-label nem contas empresariais.
 | Alojamento | Vercel (frontend + funções) |
 | Versionamento | GitHub |
 
+> **Repositório:** <https://github.com/niltonmiguelxavier-lgtm/Casa-das-estrelas>
+>
 > **Estado actual: base de dados real ligada.** O projecto Supabase está
-> configurado, as migrações `0001…0014` estão aplicadas e o fluxo
+> configurado, as migrações `0001…0018` estão aplicadas e o fluxo
 > registo → votação → pagamento → notificação foi testado contra o sistema real.
 > Ver [`docs/CONFIGURACAO-ATUAL.md`](./docs/CONFIGURACAO-ATUAL.md) e
 > [`docs/BASE-DE-DADOS.md`](./docs/BASE-DE-DADOS.md).
@@ -92,7 +94,7 @@ lib/
   demo-data.ts                  conjunto de demonstração (único ponto de dados fictícios)
   site.ts                       configuração pública do programa
 supabase/
-  migrations/                   0001…0009 (extensões → RLS)
+  migrations/                   0001…0018 (extensões → RLS → ranking)
   seed.sql                      placeholders + pacotes (apenas desenvolvimento)
 docs/                           arquitectura, segurança, webhooks, go-live
 ```
@@ -101,13 +103,19 @@ docs/                           arquitectura, segurança, webhooks, go-live
 
 ## 4. Variáveis de ambiente
 
+O email transaccional sai pela **Notifica** (`POST /email/send`, remetente oficial,
+texto simples, `transactional` para conta/pagamento). O canal só é considerado activo
+quando `NOTIFICA_API_TOKEN` existe; caso contrário as entregas ficam registadas como
+`ignorado`, com o motivo — nunca há entrega simulada.
+
 Ver [`.env.example`](./.env.example). Resumo:
 
 - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` — públicas, cliente.
 - `SUPABASE_SERVICE_ROLE_KEY` — **apenas servidor**, ignorar RLS em operações auditadas.
 - `UPSTASH_REDIS_REST_URL/TOKEN` — cache e rate limiting distribuído.
 - `PAYMENT_*` — credenciais e segredos de webhook por fornecedor (M-Pesa, e-Mola, mKesh, cartão).
-- `RESEND_API_KEY`, `VAPID_*`, `SMS_PROVIDER_KEY`, `WHATSAPP_PROVIDER_KEY` — canais.
+- `NOTIFICA_API_TOKEN`, `NOTIFICA_EMAIL_FROM` — email transaccional via Notifica.
+- `VAPID_*`, `NOTIFICA_SMS_SENDER_ID`, `NOTIFICA_WHATSAPP_FROM` — restantes canais (só activos quando configurados).
 - `CRON_SECRET` — protecção do worker de notificações.
 
 Nunca versionar `.env.local`. Nenhum segredo é referenciado em código cliente.

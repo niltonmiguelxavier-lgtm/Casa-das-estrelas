@@ -203,7 +203,7 @@ Enquanto estiver vazia, o painel mostra um aviso claro em vez de simular dados.
 | # | Item | Onde | Impacto se faltar |
 | --- | --- | --- | --- |
 | S1 | **Chave secreta** (`sb_secret_…`) | Project Settings → API | Painel admin em modo leitura; sem auditoria persistida |
-| S2 | **SMTP próprio** (Resend/SES) | Authentication → Emails | Confirmação de email e recuperação de palavra-passe limitadas a poucos envios/hora |
+| S2 | **SMTP do Supabase Auth** (ou Notifica, se disponibilizar SMTP) | Authentication → Emails | Confirmação de email e recuperação de palavra-passe limitadas a poucos envios/hora. As notificações da aplicação já saem pela Notifica; o GoTrue é um canal separado |
 | S3 | **Site URL + Redirect URLs** (`https://casadasestrelas.tv`, `/auth/callback`) | Authentication → URL Configuration | Ligações de email apontam para localhost |
 | S4 | **Confirmação de email obrigatória** | Authentication → Providers → Email | Contas não verificadas poderiam votar |
 | S5 | **Protecção de palavras-passe comprometidas** | Authentication → Policies | Sem verificação HaveIBeenPwned |

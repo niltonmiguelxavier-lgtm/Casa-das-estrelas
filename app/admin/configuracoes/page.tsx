@@ -14,7 +14,7 @@ export default async function AdminSettingsPage() {
     { k: "PAYMENT_EMOLA_API_KEY", ok: Boolean(process.env.PAYMENT_EMOLA_API_KEY) },
     { k: "PAYMENT_MKESH_API_KEY", ok: Boolean(process.env.PAYMENT_MKESH_API_KEY) },
     { k: "PAYMENT_CARD_PROVIDER_KEY", ok: Boolean(process.env.PAYMENT_CARD_PROVIDER_KEY) },
-    { k: "RESEND_API_KEY (email)", ok: Boolean(process.env.RESEND_API_KEY) },
+    { k: "NOTIFICA_API_TOKEN (email)", ok: Boolean(process.env.NOTIFICA_API_TOKEN) },
     { k: "VAPID_PUBLIC_KEY (push)", ok: Boolean(process.env.VAPID_PUBLIC_KEY) },
   ];
 

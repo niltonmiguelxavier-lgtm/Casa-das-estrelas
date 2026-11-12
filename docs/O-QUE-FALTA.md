@@ -34,7 +34,7 @@ gratuita e classificação, mesmo antes de os dados finais estarem prontos.
 | # | Item | Estado actual | O que falta |
 | --- | --- | --- | --- |
 | B1 | **Painel administrativo — escrita** | Páginas de leitura completas; botões "Novo concorrente", "Editar", "Publicar", "Enviar notificação" **sem acção ligada** | Server Actions de CRUD (concorrentes, notícias, galeria, patrocinadores, pacotes, campanhas) + upload para Storage + auditoria. **~2–3 dias** |
-| B2 | Envio de email | Fila e preferências prontas; nenhum fornecedor chamado | Integração Resend (ou equivalente) + templates. **~1 dia** |
+| B2 | Envio de email | ✅ integrado com **Notifica** (`POST /email/send`, remetente oficial, texto simples, sem SDK) | Falta só **saldo** na conta Notifica — a API devolve `400 Quota de emails insuficiente` |
 | B3 | Gateway de pagamento | Webhook, idempotência e funções SQL testados; **nenhum fornecedor integrado** | Contrato + credenciais + chamada de criação de cobrança + sandbox. **~2–4 dias por fornecedor** |
 | B4 | Redis gerido | Rate limiting em memória (funciona numa só instância) | Ligar Upstash e trocar `rateLimit`. **~2 h** |
 | B5 | Refresh da classificação | `fn_refresh_vote_totals()` testada; agendamento por criar | `pg_cron` ou cron Vercel a chamar `fn_refresh_vote_totals()`. **~1 h** |

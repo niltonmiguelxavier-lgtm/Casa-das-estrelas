@@ -24,7 +24,7 @@ de estar realmente configurado.
 | e-Mola | `PAYMENT_EMOLA_*` | **não integrado** |
 | mKesh | `PAYMENT_MKESH_*` | **não integrado** (e pode não existir oferta de e-commerce) |
 | Visa / Mastercard | `PAYMENT_CARD_PROVIDER_KEY` | **não integrado** — requer PSP autorizado |
-| Email transaccional | `RESEND_API_KEY` | canal in-app implementado; email preparado |
+| Email transaccional | `NOTIFICA_API_TOKEN` | ✅ implementado (`POST /email/send`); requer saldo na conta Notifica |
 | Push web | `VAPID_*` | tabela `push_subscriptions` pronta; envio não activado |
 | SMS | `SMS_PROVIDER_KEY` | **não integrado** |
 | WhatsApp Business | `WHATSAPP_PROVIDER_KEY` | **não integrado** (apenas com API oficial aprovada) |
