@@ -1,0 +1,13 @@
+{
+  "name": "Casa das Estrelas",
+  "short_name": "CDE",
+  "description": "Website oficial do reality show Casa das Estrelas.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#05060a",
+  "theme_color": "#05060a",
+  "lang": "pt-MZ",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
