@@ -36,9 +36,9 @@ white-label nem contas empresariais.
 | | |
 | --- | --- |
 | ![Início](docs/preview/01-inicio.png) | ![Concorrentes](docs/preview/02-concorrentes.png) |
-| ![Perfil](docs/preview/03-perfil.png) | ![Classificação](docs/preview/04-classificacao.png) |
-| ![Painel](docs/preview/05-painel.png) | ![Administração](docs/preview/06-admin.png) |
-| ![Compra de votos](docs/preview/08-compra-votos.png) | ![Galeria](docs/preview/09-galeria.png) |
+| ![Programa](docs/preview/03-programa.png) | ![Votar](docs/preview/08-compra-votos.png) |
+| ![Classificação](docs/preview/04-classificacao.png) | ![Notícias](docs/preview/10-noticias.png) |
+
 
 <img src="docs/preview/07-mobile.png" alt="Vista móvel" width="240" />
 
@@ -100,6 +100,18 @@ docs/                           arquitectura, segurança, webhooks, go-live
 ```
 
 ---
+
+## 3.1 Estrutura de layouts
+
+```
+app/layout.tsx            raiz mínima (fontes, metadados, <html>)
+app/(site)/layout.tsx     site público: cabeçalho, rodapé, barra móvel, notificações
+app/(admin)/admin/…       painel administrativo isolado (sem cabeçalho público)
+app/(site)/page.tsx       página inicial
+```
+
+O painel não partilha cabeçalho, rodapé nem navegação com o site público e não tem
+qualquer ligação visível para o visitante.
 
 ## 4. Variáveis de ambiente
 
@@ -196,12 +208,25 @@ avaliar o painel administrativo.
 
 ---
 
+## 7.1 Segurança aplicada na base de dados
+
+| Controlo | Onde |
+| --- | --- |
+| `UPDATE` por coluna — o titular não altera `role`, `status` nem dados de terceiros | migração `0019` |
+| Autorização fail-closed: funções exigem conta `activa` e não eliminada | `fn_is_admin`, `fn_is_staff`, `fn_current_role` |
+| Votos e pagamentos imutáveis (sem UPDATE/DELETE) | gatilhos `trg_votes_no_update`, `trg_payments_no_update`, `trg_transactions_no_mutation` |
+| Crédito único por ordem (idempotência) | `fn_confirm_payment` + `payment_webhooks` |
+| Auditoria append-only | `audit_logs` |
+| Sem sessão fictícia: sem base de dados não há autenticação | `lib/services/session.ts` |
+
 ## 8. Documentação complementar
 
 - [`docs/ARQUITETURA.md`](./docs/ARQUITETURA.md) — decisões, modelo de dados, escalabilidade.
 - [`docs/SEGURANCA.md`](./docs/SEGURANCA.md) — controlos implementados e ameaças cobertas.
 - [`docs/WEBHOOKS.md`](./docs/WEBHOOKS.md) — contrato de integração dos pagamentos.
 - [`docs/GO-LIVE.md`](./docs/GO-LIVE.md) — checklist antes de publicar.
+- [`docs/RELATORIO-AUDITORIA.md`](./docs/RELATORIO-AUDITORIA.md) — auditoria, correcções e testes executados.
+- [`docs/GUIA-ADMINISTRACAO.md`](./docs/GUIA-ADMINISTRACAO.md) — como operar o painel, papéis e permissões.
 - [`docs/BASE-DE-DADOS.md`](./docs/BASE-DE-DADOS.md) — projecto Supabase, migrações aplicadas,
   testes executados e o que depende do painel.
 - [`docs/CONFIGURACAO-ATUAL.md`](./docs/CONFIGURACAO-ATUAL.md) — resumo do estado, decisões tomadas e pendentes.

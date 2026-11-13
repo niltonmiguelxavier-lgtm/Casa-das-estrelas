@@ -11,7 +11,8 @@ export async function POST(req: Request) {
   if (!parsed.success) return NextResponse.json({ ok: false }, { status: 422 });
 
   const supabase = await getSupabaseServerClient();
-  if (!supabase) return NextResponse.json({ ok: true, demo: true });
+  if (!supabase)
+    return NextResponse.json({ ok: false, message: "Serviço indisponível." }, { status: 503 });
 
   // Avisos essenciais (segurança/transacções) nunca podem ser desactivados no servidor.
   const { error } = await supabase.from("notification_preferences").upsert(

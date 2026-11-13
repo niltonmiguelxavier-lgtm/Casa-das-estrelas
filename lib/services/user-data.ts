@@ -1,31 +1,13 @@
 import "server-only";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
-import { demoParticipants } from "@/lib/demo-data";
 import type { AppNotification, OrderRecord, VoteRecord } from "@/lib/types";
 
 /** Dados do próprio utilizador. Todas as consultas dependem de RLS. */
 
-const now = Date.now();
-const iso = (h: number) => new Date(now - h * 3_600_000).toISOString();
-
-const demoVotes: VoteRecord[] = [
-  { id: "v-01", participantId: demoParticipants[10].id, participantName: demoParticipants[10].name, type: "gratuito", quantity: 3, createdAt: iso(2), campaign: "1.ª Gala" },
-  { id: "v-02", participantId: demoParticipants[10].id, participantName: demoParticipants[10].name, type: "pago", quantity: 30, createdAt: iso(24), campaign: "1.ª Gala" },
-  { id: "v-03", participantId: demoParticipants[0].id, participantName: demoParticipants[0].name, type: "gratuito", quantity: 2, createdAt: iso(27), campaign: "1.ª Gala" },
-  { id: "v-04", participantId: demoParticipants[12].id, participantName: demoParticipants[12].name, type: "gratuito", quantity: 5, createdAt: iso(51), campaign: "1.ª Gala" },
-  { id: "v-05", participantId: demoParticipants[10].id, participantName: demoParticipants[10].name, type: "pago", quantity: 80, createdAt: iso(96), campaign: "1.ª Gala" },
-];
-
-const demoOrders: OrderRecord[] = [
-  { id: "o-01", reference: "CDE-2026-8F3K2A", packageName: "Pacote Constelação", votes: 30, amount: 130, currency: "MZN", method: "M-Pesa", status: "confirmado", createdAt: iso(24), paidAt: iso(24) },
-  { id: "o-02", reference: "CDE-2026-P7M4QD", packageName: "Pacote Galáxia", votes: 80, amount: 300, currency: "MZN", method: "e-Mola", status: "confirmado", createdAt: iso(96), paidAt: iso(95) },
-  { id: "o-03", reference: "CDE-2026-T2X9LB", packageName: "Pacote Estrela", votes: 10, amount: 50, currency: "MZN", method: "M-Pesa", status: "expirado", createdAt: iso(140) },
-  { id: "o-04", reference: "CDE-2026-K5R8NC", packageName: "Pacote Supernova", votes: 200, amount: 700, currency: "MZN", method: "Visa", status: "pendente", createdAt: iso(1) },
-];
 
 export async function getUserVotes(limit = 50): Promise<VoteRecord[]> {
   const supabase = await getSupabaseServerClient();
-  if (!supabase) return demoVotes.slice(0, limit);
+  if (!supabase) return [];
 
   const {
     data: { user },
@@ -56,7 +38,7 @@ export async function getUserVotes(limit = 50): Promise<VoteRecord[]> {
 
 export async function getUserOrders(limit = 50): Promise<OrderRecord[]> {
   const supabase = await getSupabaseServerClient();
-  if (!supabase) return demoOrders.slice(0, limit);
+  if (!supabase) return [];
 
   const {
     data: { user },
@@ -108,12 +90,7 @@ export async function getVoteBalance(): Promise<{ free: number; paid: number; fr
 
 export async function getSecurityActivity(limit = 10) {
   const supabase = await getSupabaseServerClient();
-  if (!supabase)
-    return [
-      { id: "s1", event: "Início de sessão", device: "Chrome · macOS", location: "Maputo, MZ", at: iso(2) },
-      { id: "s2", event: "Palavra-passe alterada", device: "Chrome · macOS", location: "Maputo, MZ", at: iso(240) },
-      { id: "s3", event: "Conta criada", device: "Chrome · macOS", location: "Maputo, MZ", at: iso(960) },
-    ];
+  if (!supabase) return [];
 
   const {
     data: { user },

@@ -9,7 +9,8 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
   if (!user) return NextResponse.json({ ok: false }, { status: 401 });
 
   const supabase = await getSupabaseServerClient();
-  if (!supabase) return NextResponse.json({ ok: true, demo: true });
+  if (!supabase)
+    return NextResponse.json({ ok: false, message: "Serviço indisponível." }, { status: 503 });
 
   const { error } = await supabase
     .from("notification_recipients")

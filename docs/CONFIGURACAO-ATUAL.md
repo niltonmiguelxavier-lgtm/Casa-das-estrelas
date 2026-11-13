@@ -99,6 +99,21 @@ sessão real; 5 páginas de administração com papel autorizado.
 | Isolamento de falhas | `AbortSignal.timeout(20s)`, nunca lança excepção: devolve `sent`/`skipped`/`failed`. Uma falha de email **não bloqueia** o registo do voto ou do pagamento |
 | Estado verificado em 12/11 | Token válido (`GET /email/senders` → 200). Envio real devolve `400 QUOTA_EXCEEDED` — falta saldo na conta, não é problema de código |
 
+
+## 3.3 Redesign e auditoria (13/11)
+
+| Item | Detalhe |
+| --- | --- |
+| **Segurança** | Migração `0019_security_hardening.sql`. `users_update_self` permitia escalada de privilégios (comprovada e depois bloqueada). `UPDATE` passou a ser por coluna; `fn_is_admin`/`fn_is_staff`/`fn_current_role` exigem conta activa. `requireUser` bloqueia contas suspensas. |
+| **Página inicial** | Reescrita como composição editorial: apresentação → concorrentes → votação → notícias → vídeos → patrocinadores. Sem gradientes, brilhos, ruído, parallax nem marquee. Contagem decrescente apenas com campanha real. |
+| **Identidade** | Botões dourados sólidos (sem gradiente), cartões planos, tipografia `display-1/2/3`, hairlines. Paleta mantida: preto · branco · dourado · cinzento. |
+| **Estrutura** | `app/layout.tsx` (raiz mínimo) + `app/(site)/layout.tsx` + `app/(admin)/admin/layout.tsx`. O painel deixou de herdar o cabeçalho público e a barra móvel. |
+| **Mobile** | Barra de navegação inferior fixa, hero com o texto primeiro, alvos de toque ≥44 px, `svh` e `env(safe-area-inset-bottom)`. |
+| **Painel** | Editores funcionais de concorrentes, notícias, galeria e notificações, com validação no servidor, auditoria e revalidação do site público. |
+| **Dados fictícios** | `lib/demo-data.ts` eliminado; notificações e dados de utilizador de exemplo removidos. Sem base de dados, o site mostra estados vazios honestos. |
+
+Relatório completo: [`RELATORIO-AUDITORIA.md`](./RELATORIO-AUDITORIA.md).
+
 ## 4. O que falta e de quem depende
 
 | # | Item | Depende de |

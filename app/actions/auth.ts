@@ -68,10 +68,8 @@ export async function registerAction(
       metadata: { demo: true, country: parsed.data.country },
     });
     return {
-      ok: true,
-      demo: true,
-      message:
-        "Modo de demonstração: a conta não foi criada porque a base de dados ainda não está ligada. Configure o Supabase para activar o registo real.",
+      ok: false,
+      message: "O registo está temporariamente indisponível. Tente novamente mais tarde.",
     };
   }
 
@@ -146,11 +144,11 @@ export async function loginAction(
 
   const supabase = await getSupabaseServerClient();
   if (!supabase) {
+    // Sem base de dados não existe autenticação possível. Falha explícita,
+    // nunca uma sessão fictícia.
     return {
-      ok: true,
-      demo: true,
-      message:
-        "Modo de demonstração: a autenticação real exige a ligação ao Supabase Auth. Será redireccionado para o painel de exemplo.",
+      ok: false,
+      message: "Serviço de autenticação indisponível neste momento. Tente mais tarde.",
     };
   }
 
@@ -168,6 +166,36 @@ export async function loginAction(
       metadata: { reason: error.message },
     });
     return { ok: false, message: "Email ou palavra-passe incorrectos." };
+  }
+
+  // Conta suspensa ou eliminada: a sessão é encerrada imediatamente.
+  // A validação é feita no servidor (nunca apenas na interface).
+  if (data.user) {
+    const { data: profile } = await supabase
+      .from("users")
+      .select("status,role")
+      .eq("id", data.user.id)
+      .maybeSingle();
+
+    const status = (profile?.status as string | undefined) ?? "activa";
+    if (status === "suspensa" || status === "eliminada") {
+      await supabase.auth.signOut();
+      await recordAudit({
+        action: "auth.login.failed",
+        actorId: data.user.id,
+        actorEmail: parsed.data.email,
+        severity: "aviso",
+        ip: h.get("x-forwarded-for"),
+        metadata: { reason: `conta ${status}` },
+      });
+      return {
+        ok: false,
+        message:
+          status === "suspensa"
+            ? "Esta conta está suspensa. Contacte o apoio ao participante para mais informações."
+            : "Esta conta foi eliminada.",
+      };
+    }
   }
 
   await recordAudit({

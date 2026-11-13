@@ -18,7 +18,14 @@ export async function GET(req: Request) {
   const secret = process.env.CRON_SECRET;
   const auth = req.headers.get("authorization") ?? "";
   if (!secret || auth !== `Bearer ${secret}`) {
-    return NextResponse.json({ ok: false }, { status: 401 });
+    // Diagnóstico explícito (não revela o segredo, apenas o motivo).
+    return NextResponse.json(
+      {
+        ok: false,
+        reason: !secret ? "cron_secret_ausente" : "autorizacao_invalida",
+      },
+      { status: 401 },
+    );
   }
 
   const admin = getServiceClient();

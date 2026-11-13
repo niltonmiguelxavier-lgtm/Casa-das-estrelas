@@ -16,15 +16,6 @@ async function getReader() {
   if (!url || !anon) return null;
   return createClient(url, anon, { auth: { persistSession: false } });
 }
-import {
-  demoCampaign,
-  demoGallery,
-  demoNews,
-  demoPackages,
-  demoParticipants,
-  demoRanking,
-  demoSponsors,
-} from "@/lib/demo-data";
 import type {
   GalleryItem,
   NewsPost,
@@ -38,8 +29,11 @@ import type {
  * Camada de acesso a dados.
  * ---------------------------------------------------------------
  * Fonte única de verdade: PostgreSQL (Supabase).
- * Se as variáveis de ambiente não estiverem definidas, a aplicação
- * recorre ao conjunto de demonstração marcado como tal na interface.
+ *
+ * REGRA: não existe conjunto de dados de demonstração no caminho público.
+ * Sem base de dados configurada, as funções devolvem colecções vazias e a
+ * interface apresenta um estado vazio honesto. Nunca são inventados
+ * concorrentes, notícias, votos ou patrocinadores.
  * ---------------------------------------------------------------
  */
 
@@ -67,12 +61,7 @@ export function isServiceConfigured() {
 
 export async function listParticipants(opts?: { country?: string }): Promise<Participant[]> {
   const supabase = await getReader();
-  if (!supabase) {
-    const list = opts?.country
-      ? demoParticipants.filter((p) => p.country === opts.country)
-      : demoParticipants;
-    return list;
-  }
+  if (!supabase) return [];
   let q = supabase
     .from("participants")
     .select(
@@ -109,7 +98,7 @@ export async function listParticipants(opts?: { country?: string }): Promise<Par
 
 export async function getParticipant(id: string): Promise<Participant | null> {
   const supabase = await getReader();
-  if (!supabase) return demoParticipants.find((p) => p.id === id || String(p.number) === id) ?? null;
+  if (!supabase) return null;
   const { data } = await supabase.from("participants").select("*").eq("id", id).maybeSingle();
   if (!data) return null;
   const totals = await getVoteTotals();
@@ -160,7 +149,7 @@ async function getVoteTotals(): Promise<
 
 export async function getRanking(): Promise<RankingRow[]> {
   const supabase = await getReader();
-  if (!supabase) return demoRanking();
+  if (!supabase) return [];
   const { data } = await supabase
     .from("ranking_current")
     .select("position,participant_id,name,number,country,photo_url,votes,variation")
@@ -179,7 +168,7 @@ export async function getRanking(): Promise<RankingRow[]> {
 
 export async function listNews(limit = 24) {
   const supabase = await getReader();
-  if (!supabase) return demoNews.slice(0, limit);
+  if (!supabase) return [];
   const { data } = await supabase
     .from("news")
     .select("id,slug,title,excerpt,body,category,cover_url,published_at,author,featured,pinned")
@@ -211,7 +200,7 @@ export async function getNewsPost(slug: string) {
 
 export async function listGallery(): Promise<GalleryItem[]> {
   const supabase = await getReader();
-  if (!supabase) return demoGallery;
+  if (!supabase) return [];
   const { data } = await supabase
     .from("gallery")
     .select("*")
@@ -231,7 +220,7 @@ export async function listGallery(): Promise<GalleryItem[]> {
 
 export async function listPackages(): Promise<VotePackage[]> {
   const supabase = await getReader();
-  if (!supabase) return demoPackages.filter((p) => p.active);
+  if (!supabase) return [];
   const { data } = await supabase
     .from("vote_packages")
     .select("*")
@@ -252,7 +241,7 @@ export async function listPackages(): Promise<VotePackage[]> {
 
 export async function getActiveCampaign(): Promise<VotingCampaign | null> {
   const supabase = await getReader();
-  if (!supabase) return demoCampaign;
+  if (!supabase) return null;
   const { data } = await supabase
     .from("voting_campaigns")
     .select("*, voting_rules(*)")
@@ -278,7 +267,7 @@ export async function getActiveCampaign(): Promise<VotingCampaign | null> {
 
 export async function listSponsors() {
   const supabase = await getReader();
-  if (!supabase) return demoSponsors;
+  if (!supabase) return [];
   const { data } = await supabase
     .from("sponsors")
     .select("name,tier,logo_url,website")

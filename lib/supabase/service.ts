@@ -28,7 +28,7 @@ interface QueryResult<T = Row[]> {
 }
 
 interface Filter {
-  op: "eq" | "lte" | "in" | "order" | "limit";
+  op: "eq" | "lte" | "in" | "is" | "order" | "limit";
   column?: string;
   value?: unknown;
   ascending?: boolean;
@@ -47,6 +47,7 @@ export interface ServiceClient {
 interface FilterBuilder {
   eq(column: string, value: unknown): FilterBuilder;
   lte(column: string, value: unknown): FilterBuilder;
+  is(column: string, value: null | boolean): FilterBuilder;
   in(column: string, values: unknown[]): FilterBuilder;
   order(column: string, opts?: { ascending?: boolean }): FilterBuilder;
   limit(n: number): FilterBuilder;
@@ -120,6 +121,11 @@ function pgQueryBuilder(table: string, action: "select" | "update", payload?: Ro
       filters.push({ op: "lte", column, value });
       return builder;
     },
+    is(column, value) {
+      assertIdent(column, "coluna");
+      filters.push({ op: "is", column, value });
+      return builder;
+    },
     in(column, values) {
       assertIdent(column, "coluna");
       filters.push({ op: "in", column, value: values });
@@ -168,6 +174,8 @@ function pgQueryBuilder(table: string, action: "select" | "update", payload?: Ro
           } else if (f.op === "in") {
             values.push(f.value);
             where.push(`${f.column} = any($${values.length})`);
+          } else if (f.op === "is") {
+            where.push(f.value === null ? `${f.column} is null` : `${f.column} is ${f.value}`);
           }
         }
         if (where.length) sql += ` where ${where.join(" and ")}`;
@@ -198,6 +206,8 @@ function pgQueryBuilder(table: string, action: "select" | "update", payload?: Ro
         } else if (f.op === "in") {
           values.push(f.value);
           where.push(`${f.column} = any($${values.length})`);
+        } else if (f.op === "is") {
+          where.push(f.value === null ? `${f.column} is null` : `${f.column} is ${f.value}`);
         } else if (f.op === "order") {
           orderParts.push(`${f.column} ${f.ascending ? "asc" : "desc"}`);
         } else if (f.op === "limit") {
@@ -308,6 +318,10 @@ function restBuilder(
     },
     in(column, values) {
       query = query.in(column, values as never);
+      return builder;
+    },
+    is(column, value) {
+      query = query.is(column, value as never);
       return builder;
     },
     order(column, opts) {

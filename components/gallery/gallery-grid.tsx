@@ -5,7 +5,14 @@ import { Play, X, ChevronLeft, ChevronRight, ImageIcon, Video } from "lucide-rea
 import type { GalleryItem } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-export function GalleryGrid({ items, events }: { items: GalleryItem[]; events: string[] }) {
+export function GalleryGrid({
+  items,
+  events,
+}: {
+  items: GalleryItem[];
+  /** Filtros de evento. Omitido ou vazio ⇒ sem filtro por evento. */
+  events?: string[];
+}) {
   const [filter, setFilter] = useState<string>("Todos");
   const [type, setType] = useState<"todos" | "foto" | "video">("todos");
   const [index, setIndex] = useState<number | null>(null);
@@ -68,9 +75,11 @@ export function GalleryGrid({ items, events }: { items: GalleryItem[]; events: s
             </button>
           ))}
         </div>
+        {(events?.length ?? 0) > 0 && (
+          <>
         <span className="mx-1 hidden h-4 w-px bg-white/10 sm:block" />
         <div className="scrollbar-none flex gap-1.5 overflow-x-auto">
-          {["Todos", ...events].map((e) => (
+          {["Todos", ...(events ?? [])].map((e) => (
             <button
               key={e}
               onClick={() => {
@@ -88,6 +97,8 @@ export function GalleryGrid({ items, events }: { items: GalleryItem[]; events: s
             </button>
           ))}
         </div>
+          </>
+        )}
       </div>
 
       <div className="mt-6 columns-2 gap-3 sm:columns-3 lg:columns-4 [&>*]:mb-3">

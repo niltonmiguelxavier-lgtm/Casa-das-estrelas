@@ -64,19 +64,7 @@ export async function castFreeVoteAction(
 
   const supabase = await getSupabaseServerClient();
   if (!supabase) {
-    await recordAudit({
-      action: "vote.free",
-      actorId: user.id,
-      entity: "participants",
-      entityId: participant.id,
-      metadata: { demo: true, campaign: campaign.id, quantity: parsed.data.quantity },
-    });
-    return {
-      ok: true,
-      demo: true,
-      remaining: Math.max(0, campaign.freeVotesPerUser - parsed.data.quantity),
-      message: `Modo de demonstração: o voto para ${participant.name} foi validado mas não foi gravado porque a base de dados ainda não está ligada.`,
-    };
+    return { ok: false, message: "Serviço de votação indisponível. Tente novamente mais tarde." };
   }
 
   // Transacção atómica: verifica limite, insere voto, actualiza agregados,

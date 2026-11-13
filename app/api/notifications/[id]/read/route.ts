@@ -8,7 +8,8 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
   if (!user) return NextResponse.json({ ok: false }, { status: 401 });
 
   const supabase = await getSupabaseServerClient();
-  if (!supabase) return NextResponse.json({ ok: true, demo: true });
+  if (!supabase)
+    return NextResponse.json({ ok: false, message: "Serviço indisponível." }, { status: 503 });
 
   // RLS garante que o utilizador só altera as suas próprias linhas.
   const { error } = await supabase

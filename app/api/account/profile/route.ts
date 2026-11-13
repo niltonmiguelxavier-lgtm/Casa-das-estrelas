@@ -13,7 +13,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, message: "Dados inválidos." }, { status: 422 });
 
   const supabase = await getSupabaseServerClient();
-  if (!supabase) return NextResponse.json({ ok: true, demo: true });
+  if (!supabase)
+    return NextResponse.json({ ok: false, message: "Serviço indisponível." }, { status: 503 });
 
   const { error } = await supabase
     .from("user_profiles")

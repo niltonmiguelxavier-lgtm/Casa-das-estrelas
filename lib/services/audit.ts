@@ -17,6 +17,13 @@ export type AuditAction =
   | "admin.participant.updated"
   | "admin.news.published"
   | "admin.notification.sent"
+  | "admin.notification.cancelled"
+  | "admin.participant.created"
+  | "admin.participant.deleted"
+  | "admin.news.saved"
+  | "admin.news.deleted"
+  | "admin.gallery.saved"
+  | "admin.gallery.deleted"
   | "admin.user.suspended"
   | "admin.export";
 

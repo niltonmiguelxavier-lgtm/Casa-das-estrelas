@@ -30,7 +30,7 @@ export function VoteDialog({
   participant,
   campaignId,
   authenticated,
-  freeVotesPerUser = 5,
+  freeVotesPerUser = 1,
 }: {
   open: boolean;
   onClose: () => void;
@@ -148,11 +148,11 @@ export function VoteDialog({
                     Votos a usar
                   </span>
                   <span className="text-[0.7rem] text-white/40">
-                    limite: {freeVotesPerUser}/dia
+                    limite: {freeVotesPerUser} por período
                   </span>
                 </div>
                 <div className="mt-2.5 flex items-center gap-2">
-                  {[1, 2, 3, 5].map((n) => (
+                  {Array.from({ length: Math.min(5, Math.max(1, freeVotesPerUser)) }, (_, i) => i + 1).map((n) => (
                     <button
                       key={n}
                       type="button"

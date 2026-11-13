@@ -15,19 +15,18 @@ export function AuthShell({
   image?: string;
 }) {
   return (
-    <div className="relative -mt-16 min-h-screen md:-mt-[74px]">
+    <div className="relative min-h-screen">
       <div className="absolute inset-0">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={image} alt="" aria-hidden className="h-full w-full object-cover opacity-30" />
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#05060a,rgba(5,6,10,0.85)_45%,rgba(5,6,10,0.7))]" />
-        <div className="absolute inset-0 noise" />
-      </div>
+              </div>
 
       <div className="container-page relative grid min-h-screen items-center gap-10 py-24 lg:grid-cols-2">
         <div className="hidden lg:block">
           <Logo />
           <h2 className="mt-8 max-w-md font-display text-[2.6rem] font-black leading-[0.98] text-white">
-            A sua voz na <span className="gold-text">Casa das Estrelas</span>
+            A sua voz na <span className="text-gold-400">Casa das Estrelas</span>
           </h2>
           <p className="mt-4 max-w-sm text-[0.92rem] leading-relaxed text-white/50">
             Crie conta para votar, acompanhar o seu histórico e receber notificações oficiais do

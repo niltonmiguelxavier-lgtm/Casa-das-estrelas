@@ -31,11 +31,7 @@ export async function POST(req: Request) {
 
   const supabase = await getSupabaseServerClient();
   if (!supabase)
-    return NextResponse.json({
-      ok: true,
-      demo: true,
-      message: "Modo de demonstração: a alteração real exige Supabase Auth configurado.",
-    });
+    return NextResponse.json({ ok: false, message: "Serviço indisponível." }, { status: 503 });
 
   // Reautenticação antes da alteração (protecção contra sequestro de sessão).
   const { error: authError } = await supabase.auth.signInWithPassword({

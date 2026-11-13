@@ -13,7 +13,7 @@ export function Logo({
 }) {
   const mark = (
     <span className={cn("flex items-center gap-2.5", className)}>
-      <span className="relative grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-gold-200 via-gold-400 to-gold-600 shadow-[0_8px_20px_-8px_rgba(242,182,43,0.8)]">
+      <span className="relative grid h-9 w-9 shrink-0 place-items-center bg-gold-400">
         <svg viewBox="0 0 24 24" className="h-5 w-5 text-ink-950" aria-hidden="true">
           <path
             fill="currentColor"
@@ -27,7 +27,7 @@ export function Logo({
           <span className="font-display text-[15px] font-extrabold tracking-[0.14em] text-white">
             Casa das
           </span>
-          <span className="font-display text-[15px] font-extrabold tracking-[0.28em] gold-text">
+          <span className="font-display text-[15px] font-extrabold tracking-[0.28em] text-gold-400">
             Estrelas
           </span>
         </span>

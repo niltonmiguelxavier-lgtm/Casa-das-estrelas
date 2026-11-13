@@ -113,9 +113,7 @@ body {
 }
 
 .panel {
-  background:
-    radial-gradient(120% 100% at 0% 0%, rgba(242, 182, 43, 0.055), transparent 55%),
-    #0b0d15;
+  background: #0a0b12;
   border: 1px solid var(--line);
 }
 
@@ -124,10 +122,7 @@ body {
 }
 
 .gold-text {
-  background: linear-gradient(100deg, #fdf0c8 0%, #f8cb52 42%, #e0a017 70%, #fbe08d 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: #f2b62b;
 }
 
 .noise::after {
@@ -173,13 +168,15 @@ body {
 }
 
 .btn-gold {
-  background: linear-gradient(135deg, #fbe08d, #f2b62b 45%, #d99212);
-  color: #1a1305;
-  box-shadow: 0 10px 30px -12px rgba(242, 182, 43, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  background: #f2b62b;
+  color: #100c02;
+  border: 1px solid #f2b62b;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 .btn-gold:hover {
-  box-shadow: 0 16px 40px -12px rgba(242, 182, 43, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.55);
-  transform: translateY(-1px);
+  background: #ffc846;
+  border-color: #ffc846;
 }
 
 .btn-ghost {
@@ -246,11 +243,10 @@ select.field option {
   border-radius: 1.1rem;
   background: #0b0d15;
   border: 1px solid var(--line);
-  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s, box-shadow 0.4s;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
 }
 .card:hover {
-  border-color: rgba(242, 182, 43, 0.32);
-  box-shadow: 0 26px 60px -30px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(242, 182, 43, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .hover-lift:hover {
@@ -450,4 +446,120 @@ select.field option {
 
 .text-shadow-hero {
   text-shadow: 0 2px 40px rgba(0, 0, 0, 0.75), 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+/* ============================================================
+   CAMADA EDITORIAL (redesign)
+   Regras: hierarquia tipográfica clara, hairlines douradas,
+   superfícies planas, movimento discreto.
+   ============================================================ */
+
+.eyebrow {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: #f2b62b;
+}
+
+.rule-gold {
+  display: block;
+  width: 2.5rem;
+  height: 2px;
+  background: #f2b62b;
+  border: 0;
+}
+
+.display-1 {
+  font-family: var(--font-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 0.88;
+  font-size: clamp(2.75rem, 11vw, 7.5rem);
+}
+
+.display-2 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.015em;
+  line-height: 0.95;
+  font-size: clamp(1.85rem, 4.2vw, 2.9rem);
+}
+
+.display-3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 1.05;
+  font-size: clamp(1.15rem, 2vw, 1.45rem);
+}
+
+.lead {
+  font-size: clamp(0.98rem, 1.4vw, 1.12rem);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.surface {
+  background: #08090f;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Grelha editorial: divisórias finas, sem cartões empilhados */
+.divide-hair > * + * {
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* Fotografia com tratamento uniforme */
+.photo-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 22%;
+}
+
+/* Barra de navegação móvel segura */
+.safe-bottom {
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+}
+
+/* Alvo de toque mínimo (acessibilidade móvel) */
+.tap {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Ligação com sublinhado animado discreto */
+.link-underline {
+  position: relative;
+}
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.28s ease;
+}
+.link-underline:hover::after,
+.link-underline[data-active="true"]::after {
+  transform: scaleX(1);
+}
+
+/* Marca de água tipográfica para estados vazios */
+.empty-mark {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(3rem, 9vw, 6rem);
+  line-height: 0.8;
+  color: rgba(255, 255, 255, 0.04);
+  letter-spacing: -0.03em;
+  user-select: none;
 }

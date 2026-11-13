@@ -18,12 +18,17 @@ export const site = {
     privacidade: "privacidade@casadasestrelas.tv",
   },
   phone: "+258 84 000 0000",
+  /**
+   * Redes sociais oficiais. Apenas são mostradas as que estiverem definidas e
+   * activas — um endereço vazio significa «sem presença pública ainda» e o
+   * ícone não é apresentado. Substituir pelos endereços oficiais confirmados.
+   */
   social: {
-    instagram: "https://instagram.com/",
-    facebook: "https://facebook.com/",
-    tiktok: "https://tiktok.com/",
-    youtube: "https://youtube.com/",
-    x: "https://x.com/",
+    instagram: "",
+    facebook: "",
+    tiktok: "",
+    youtube: "",
+    x: "",
   },
   edition: "1.ª Edição",
   timezone: "Africa/Maputo",
@@ -33,13 +38,25 @@ export const site = {
 
 export type SiteConfig = typeof site;
 
+/**
+ * Navegação pública. Ordem definida pela produção:
+ * Início · Concorrentes · Notícias · Vídeos · Votação.
+ * Nenhuma ligação administrativa é exposta ao visitante.
+ */
 export const NAV_LINKS = [
-  { href: "/programa", label: "O Programa" },
+  { href: "/", label: "Início" },
   { href: "/concorrentes", label: "Concorrentes" },
-  { href: "/votar", label: "Votar" },
-  { href: "/classificacao", label: "Classificação" },
   { href: "/noticias", label: "Notícias" },
-  { href: "/galeria", label: "Galeria" },
+  { href: "/galeria", label: "Vídeos" },
+  { href: "/votar", label: "Votação" },
+] as const;
+
+/** Navegação secundária (desktop e menu móvel). */
+export const NAV_LINKS_SECONDARY = [
+  { href: "/programa", label: "O Programa" },
+  { href: "/classificacao", label: "Classificação" },
+  { href: "/premios", label: "Prémios" },
+  { href: "/patrocinadores", label: "Patrocinadores" },
 ] as const;
 
 export const FOOTER_LINKS = {
